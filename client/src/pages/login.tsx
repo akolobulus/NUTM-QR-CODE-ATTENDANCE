@@ -71,8 +71,8 @@ export default function Login() {
         <div className="flex items-center justify-center h-full bg-black bg-opacity-40">
           <div className="text-center p-10">
             <img src={nutmWhiteLogo} alt="NUTM Logo" className="mx-auto mb-8 w-[280px]" />
-            <h1 className="text-white text-4xl font-bold mb-4 font-heading">Attendance System</h1>
-            <p className="text-white text-xl">Show up, stand out, and strive for success—your journey starts with every attendance!</p>
+            <h1 className="text-white text-3xl font-bold mb-3 font-heading">Attendance System</h1>
+            <p className="text-white text-base">Show up, stand out, and strive for success—your journey starts with every attendance!</p>
           </div>
         </div>
       </div>
