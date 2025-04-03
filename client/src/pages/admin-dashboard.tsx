@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Sidebar } from '@/components/layout/sidebar';
 import AddCourseModal from '@/components/add-course-modal';
 import AddStudentModal from '@/components/add-student-modal';
+import QRScannerModal from '@/components/qr-scanner-modal';
 import AttendanceChart from '@/components/attendance-chart';
 import {
   Download,
@@ -30,6 +31,8 @@ import {
   Eye,
   UserPlus,
   BookPlus,
+  Scan,
+  Camera,
 } from 'lucide-react';
 import { useIsMobile as useMobile } from '@/hooks/use-mobile';
 
@@ -44,6 +47,7 @@ export default function AdminDashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedCourseForChart, setSelectedCourseForChart] = useState<number | null>(null);
+  const [isQrScannerOpen, setIsQrScannerOpen] = useState(false);
 
   // Redirect if not logged in or not an admin
   useEffect(() => {
@@ -346,6 +350,15 @@ export default function AdminDashboard() {
                               <div className="flex space-x-2">
                                 <Button 
                                   variant="ghost" 
+                                  size="icon"
+                                  className="text-green-500 hover:text-green-700"
+                                  onClick={() => setIsQrScannerOpen(true)}
+                                  title="Scan Attendance QR"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v4"/><path d="M7 12h4"/><path d="M12 16v.01"/><path d="M17 12h.01"/></svg>
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
                                   size="icon" 
                                   className="text-primary hover:text-primary-dark" 
                                   onClick={() => toast({ title: "Edit Course", description: "Edit functionality is not implemented in this demo" })}
@@ -405,6 +418,7 @@ export default function AdminDashboard() {
       {/* Modals */}
       <AddCourseModal isOpen={isCourseModalOpen} onClose={() => setIsCourseModalOpen(false)} />
       <AddStudentModal isOpen={isStudentModalOpen} onClose={() => setIsStudentModalOpen(false)} />
+      <QRScannerModal isOpen={isQrScannerOpen} onClose={() => setIsQrScannerOpen(false)} />
     </div>
   );
 }

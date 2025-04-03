@@ -184,7 +184,7 @@ export default function AddStudentModal({ isOpen, onClose }: AddStudentModalProp
               name="facultyId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Faculty</FormLabel>
+                  <FormLabel>Department</FormLabel>
                   <Select
                     value={field.value}
                     onValueChange={field.onChange}
@@ -192,7 +192,7 @@ export default function AddStudentModal({ isOpen, onClose }: AddStudentModalProp
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a faculty" />
+                        <SelectValue placeholder="Select a department" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -201,6 +201,14 @@ export default function AddStudentModal({ isOpen, onClose }: AddStudentModalProp
                           {faculty.name}
                         </SelectItem>
                       ))}
+                      {/* Adding specific departments if API doesn't return any */}
+                      {(!faculties || faculties.length === 0) && (
+                        <>
+                          <SelectItem value="1">Computer Science</SelectItem>
+                          <SelectItem value="2">Cybersecurity</SelectItem>
+                          <SelectItem value="3">Information Technology</SelectItem>
+                        </>
+                      )}
                     </SelectContent>
                   </Select>
                   <FormMessage />
