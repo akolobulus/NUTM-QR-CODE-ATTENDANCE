@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     async function checkAuthStatus() {
       try {
-        const res = await fetch('/api/auth/me', {
+        const res = await fetch('/api/user', {
           credentials: 'include'
         });
 
@@ -58,7 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (username: string, password: string, remember: boolean = false) => {
     setIsLoading(true);
     try {
-      const res = await apiRequest('POST', '/api/auth/login', { username, password });
+      const res = await apiRequest('POST', '/api/login', { username, password });
       const userData = await res.json();
       setUser(userData);
 
@@ -82,7 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = async () => {
     setIsLoading(true);
     try {
-      await apiRequest('POST', '/api/auth/logout', {});
+      await apiRequest('POST', '/api/logout', {});
       setUser(null);
       navigate('/');
     } catch (error) {

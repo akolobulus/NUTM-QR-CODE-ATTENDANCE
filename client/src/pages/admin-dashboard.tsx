@@ -17,6 +17,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { Sidebar } from '@/components/layout/sidebar';
 import AddCourseModal from '@/components/add-course-modal';
+import AddStudentModal from '@/components/add-student-modal';
 import AttendanceChart from '@/components/attendance-chart';
 import {
   Download,
@@ -27,6 +28,8 @@ import {
   Edit,
   Trash,
   Eye,
+  UserPlus,
+  BookPlus,
 } from 'lucide-react';
 import { useIsMobile as useMobile } from '@/hooks/use-mobile';
 
@@ -35,7 +38,8 @@ export default function AdminDashboard() {
   const [_, navigate] = useLocation();
   const { toast } = useToast();
   const isMobile = useMobile();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCourseModalOpen, setIsCourseModalOpen] = useState(false);
+  const [isStudentModalOpen, setIsStudentModalOpen] = useState(false);
   const [selectedSemester, setSelectedSemester] = useState('Beta Semester');
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -265,14 +269,24 @@ export default function AdminDashboard() {
               <Card>
                 <div className="px-4 py-5 border-b border-gray-200 sm:px-6 flex justify-between items-center">
                   <h3 className="text-lg leading-6 font-medium text-gray-900 font-heading">Course Management</h3>
-                  <Button 
-                    size="sm" 
-                    className="bg-primary hover:bg-primary-dark"
-                    onClick={() => setIsModalOpen(true)}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                    Add Course
-                  </Button>
+                  <div className="flex space-x-3">
+                    <Button 
+                      size="sm" 
+                      className="bg-primary hover:bg-primary-dark"
+                      onClick={() => setIsStudentModalOpen(true)}
+                    >
+                      <UserPlus className="h-4 w-4 mr-1" />
+                      Add Student
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      className="bg-primary hover:bg-primary-dark"
+                      onClick={() => setIsCourseModalOpen(true)}
+                    >
+                      <BookPlus className="h-4 w-4 mr-1" />
+                      Add Course
+                    </Button>
+                  </div>
                 </div>
                 
                 <div className="px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-200">
@@ -388,8 +402,9 @@ export default function AdminDashboard() {
         </main>
       </div>
 
-      {/* Add Course Modal */}
-      <AddCourseModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      {/* Modals */}
+      <AddCourseModal isOpen={isCourseModalOpen} onClose={() => setIsCourseModalOpen(false)} />
+      <AddStudentModal isOpen={isStudentModalOpen} onClose={() => setIsStudentModalOpen(false)} />
     </div>
   );
 }

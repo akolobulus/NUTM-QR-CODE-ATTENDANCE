@@ -2,6 +2,7 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import * as crypto from "crypto";
+import { promisify } from "util";
 import { 
   insertCourseSchema, 
   insertSessionSchema,
@@ -32,7 +33,7 @@ const requireAdmin = (req: Request, res: Response, next: NextFunction) => {
     return res.status(401).json({ message: 'Not authenticated' });
   }
   
-  if (req.user.role !== 'admin') {
+  if (req.user!.role !== 'admin') {
     return res.status(403).json({ message: 'Not authorized' });
   }
   
@@ -45,7 +46,7 @@ const requireStudent = (req: Request, res: Response, next: NextFunction) => {
     return res.status(401).json({ message: 'Not authenticated' });
   }
   
-  if (req.user.role !== 'student') {
+  if (req.user!.role !== 'student') {
     return res.status(403).json({ message: 'Not authorized' });
   }
   
@@ -198,7 +199,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Enrollment routes
+  // Student management routes
+  app.get('/api/students', requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const students = await storage.getUsersByRole('student');
+      return res.status(200).json(students);
+    } catch (error) {
+      console.error('Error fetching students:', error);
+      return res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  app.get('/api/faculties', requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const faculties = await storage.getFaculties();
+      return res.status(200).json(faculties);
+    } catch (error) {
+      console.error('Error fetching faculties:', error);
+      return res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  app.post('/api/students', requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const { name, email, password, username, facultyId } = req.body;
+      
+      // Check if user with this email or username already exists
+      const existingUserByEmail = await storage.getUserByEmail(email);
+      if (existingUserByEmail) {
+        return res.status(400).json({ message: 'User with this email already exists' });
+      }
+      
+      const existingUserByUsername = await storage.getUserByUsername(username);
+      if (existingUserByUsername) {
+        return res.status(400).json({ message: 'User with this username already exists' });
+      }
+      
+      // Hash the password
+      const salt = crypto.randomBytes(16).toString("hex");
+      const buf = await promisify(crypto.scrypt)(password, salt, 64) as Buffer;
+      const hashedPassword = `${buf.toString("hex")}.${salt}`;
+      
+      // Create the student user
+      const student = await storage.createUser({
+        name,
+        email,
+        username,
+        password: hashedPassword,
+        role: 'student',
+        facultyId: facultyId || null
+      });
+      
+      return res.status(201).json({
+        id: student.id,
+        name: student.name,
+        email: student.email,
+        username: student.username,
+        role: student.role,
+        facultyId: student.facultyId
+      });
+    } catch (error) {
+      console.error('Error creating student:', error);
+      return res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+// Enrollment routes
   app.post('/api/enrollments', requireAdmin, async (req: Request, res: Response) => {
     try {
       const data = insertEnrollmentSchema.parse(req.body);
@@ -226,7 +292,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.get('/api/student/enrollments', requireStudent, async (req: Request, res: Response) => {
     try {
-      const studentId = req.user.id;
+      const studentId = req.user!.id;
       const enrollments = await storage.getEnrollmentsByStudent(studentId);
       
       // Get additional data for each enrollment
@@ -261,7 +327,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // QR code generation and attendance tracking
   app.get('/api/student/generate-qr', requireStudent, async (req: Request, res: Response) => {
     try {
-      const studentId = req.user.id;
+      const studentId = req.user!.id;
       
       // Generate a QR code for this student
       const timestamp = new Date().toISOString();
