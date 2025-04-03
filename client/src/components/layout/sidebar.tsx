@@ -37,8 +37,8 @@ export function Sidebar({ setMobileMenuOpen }: SidebarProps) {
   const isMobileView = typeof setMobileMenuOpen === 'function';
 
   return (
-    <div className="fixed inset-y-0 left-0 z-50 w-64 bg-[#388E3C] flex flex-col bg-blend-multiply" style={{backgroundImage: 'url(/images/1140.jpg)', backgroundSize: 'cover', backgroundPosition: 'center'}}>
-      <div className="flex items-center h-16 flex-shrink-0 px-4 bg-[#4CAF50] relative" style={{backgroundImage: 'url(/images/1140.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundBlendMode: 'multiply'}}>
+    <div className="fixed inset-y-0 left-0 z-50 w-64 bg-[#388E3C] flex flex-col">
+      <div className="flex items-center h-16 flex-shrink-0 px-4 bg-[#4CAF50] relative">
         {isMobileView && (
           <Button 
             variant="ghost" 
