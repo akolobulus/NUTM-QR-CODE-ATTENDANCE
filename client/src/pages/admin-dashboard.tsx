@@ -48,6 +48,7 @@ export default function AdminDashboard() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedCourseForChart, setSelectedCourseForChart] = useState<number | null>(null);
   const [isQrScannerOpen, setIsQrScannerOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Redirect if not logged in or not an admin
   useEffect(() => {
@@ -117,16 +118,30 @@ export default function AdminDashboard() {
     downloadAttendanceReport(selectedCourseForChart || undefined);
   };
 
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar for desktop */}
-      {!isMobile && <Sidebar setMobileMenuOpen={setMobileMenuOpen} />}
+      {!isMobile && (
+        <Sidebar 
+          setMobileMenuOpen={setMobileMenuOpen} 
+          collapsed={sidebarCollapsed} 
+          toggleCollapsed={toggleSidebar} 
+        />
+      )}
 
       {/* Mobile sidebar - controlled by mobileMenuOpen state */}
-      {isMobile && mobileMenuOpen && <Sidebar setMobileMenuOpen={setMobileMenuOpen} />}
+      {isMobile && mobileMenuOpen && (
+        <Sidebar 
+          setMobileMenuOpen={setMobileMenuOpen}
+        />
+      )}
 
       {/* Main content */}
-      <div className="flex flex-col w-full">
+      <div className={`flex flex-col w-full transition-all duration-300 ${!isMobile && sidebarCollapsed ? 'ml-16' : !isMobile ? 'ml-64' : ''}`}>
         {/* Mobile header */}
         {isMobile && (
           <div className="bg-primary fixed top-0 left-0 right-0 z-10">
@@ -274,6 +289,14 @@ export default function AdminDashboard() {
                 <div className="px-4 py-5 border-b border-gray-200 sm:px-6 flex justify-between items-center">
                   <h3 className="text-lg leading-6 font-medium text-gray-900 font-heading">Course Management</h3>
                   <div className="flex space-x-3">
+                    <Button 
+                      size="sm" 
+                      className="bg-green-500 hover:bg-green-600 text-white"
+                      onClick={() => setIsQrScannerOpen(true)}
+                    >
+                      <Scan className="h-4 w-4 mr-1" />
+                      Scan QR Code
+                    </Button>
                     <Button 
                       size="sm" 
                       className="bg-primary hover:bg-primary-dark"

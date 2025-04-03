@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
@@ -8,8 +8,10 @@ import { useQuery } from '@tanstack/react-query';
 import { getStudentEnrollments, getStudentAttendanceHistory } from '@/lib/attendance';
 import QRCode from '@/components/qr-code';
 import AttendanceProgress from '@/components/attendance-progress';
-import { LogOut, User } from 'lucide-react';
+import { LogOut, User, ChevronLeft, ChevronRight, Menu } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Sidebar } from '@/components/layout/sidebar';
+import { useIsMobile } from '@/hooks/use-mobile';
 import {
   Pagination,
   PaginationContent,
@@ -18,7 +20,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { useState } from 'react';
 
 export default function StudentDashboard() {
   const { user, logout, isLoading: authLoading } = useAuth();
@@ -26,6 +27,13 @@ export default function StudentDashboard() {
   const { toast } = useToast();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const isMobile = useIsMobile();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
 
   // Redirect if not logged in or not a student
   useEffect(() => {
@@ -86,25 +94,87 @@ export default function StudentDashboard() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <div className="flex items-center">
-            <img src="/images/nutm-logo-symbol.jpg" alt="NUTM" className="h-8 w-8 mr-3" />
-            <h1 className="text-xl font-bold font-heading text-gray-800">Student Dashboard</h1>
-          </div>
-          
-          <div className="flex items-center">
-            <span className="mr-4 text-sm font-medium text-gray-700">{user.name}</span>
-            <Button variant="ghost" size="icon" onClick={handleLogout} title="Logout">
-              <LogOut className="h-5 w-5" />
-            </Button>
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar */}
+      {!isMobile && (
+        <div className={`fixed inset-y-0 left-0 z-50 transform ${sidebarCollapsed ? 'w-16' : 'w-64'} bg-primary transition-all duration-300 ease-in-out overflow-y-auto`}>
+          <div className="flex flex-col h-full">
+            {/* Sidebar Header */}
+            <div className="flex items-center justify-between h-16 px-4 border-b border-primary-dark">
+              {!sidebarCollapsed && (
+                <div className="flex items-center">
+                  <img src="/images/nutm-logo-symbol.jpg" alt="NUTM" className="h-8 w-8 mr-2" />
+                  <span className="text-white font-semibold">NUTM</span>
+                </div>
+              )}
+              
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-white hover:bg-primary-dark"
+                onClick={toggleSidebar}
+              >
+                {sidebarCollapsed ? <ChevronRight /> : <ChevronLeft />}
+              </Button>
+            </div>
+            
+            {/* Sidebar Links */}
+            <div className="flex-1 py-4">
+              <div className={`flex flex-col space-y-1 ${sidebarCollapsed ? 'items-center' : 'px-3'}`}>
+                <Button
+                  variant="ghost"
+                  className={`${sidebarCollapsed ? 'justify-center' : 'justify-start'} text-white hover:bg-primary-dark w-full`}
+                >
+                  <User className={`h-5 w-5 ${!sidebarCollapsed ? 'mr-2' : ''}`} />
+                  {!sidebarCollapsed && <span>Dashboard</span>}
+                </Button>
+              </div>
+            </div>
+            
+            {/* Sidebar Footer */}
+            <div className={`p-4 border-t border-primary-dark ${sidebarCollapsed ? 'flex justify-center' : ''}`}>
+              <Button
+                variant="ghost"
+                className={`${sidebarCollapsed ? 'w-10 h-10 p-0' : 'w-full'} text-white hover:bg-primary-dark ${sidebarCollapsed ? 'justify-center' : 'justify-start'}`}
+                onClick={handleLogout}
+              >
+                <LogOut className={`h-5 w-5 ${!sidebarCollapsed ? 'mr-2' : ''}`} />
+                {!sidebarCollapsed && <span>Logout</span>}
+              </Button>
+            </div>
           </div>
         </div>
-      </header>
+      )}
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Mobile sidebar */}
+      {isMobile && mobileMenuOpen && (
+        <Sidebar
+          collapsed={false}
+          setMobileMenuOpen={setMobileMenuOpen}
+        />
+      )}
+      
+      {/* Main content */}
+      <div className={`flex flex-col w-full transition-all duration-300 ${!isMobile && sidebarCollapsed ? 'ml-16' : !isMobile ? 'ml-64' : ''}`}>
+        {/* Mobile header */}
+        {isMobile && (
+          <div className="bg-primary fixed top-0 left-0 right-0 z-10">
+            <div className="px-4 py-3 flex items-center justify-between">
+              <div className="flex items-center">
+                <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(true)} className="text-white">
+                  <Menu />
+                </Button>
+                <img src="/images/nutm-logo-symbol.jpg" alt="NUTM" className="h-8 w-8 ml-3" />
+              </div>
+              <div className="text-white font-medium">Student Dashboard</div>
+              <Button variant="ghost" size="icon" onClick={handleLogout} className="text-white">
+                <LogOut className="h-5 w-5" />
+              </Button>
+            </div>
+          </div>
+        )}
+      
+        <main className={`flex-1 relative overflow-y-auto focus:outline-none ${isMobile ? 'pt-16' : ''} px-4 sm:px-6 lg:px-8 py-8`}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* QR Code Section */}
           <div className="md:col-span-1">
@@ -230,6 +300,7 @@ export default function StudentDashboard() {
           </div>
         </div>
       </main>
+      </div>
     </div>
   );
 }
