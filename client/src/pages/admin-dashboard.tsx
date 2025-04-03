@@ -85,6 +85,13 @@ export default function AdminDashboard() {
     course.lecturer.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Set a default selected course for chart if we haven't selected one yet but have courses
+  useEffect(() => {
+    if (courses?.length && selectedCourseForChart === null) {
+      setSelectedCourseForChart(courses[0].id);
+    }
+  }, [courses, selectedCourseForChart]);
+
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -95,13 +102,6 @@ export default function AdminDashboard() {
       </div>
     );
   }
-
-  // Set a default selected course for chart if we haven't selected one yet but have courses
-  useEffect(() => {
-    if (courses?.length && selectedCourseForChart === null) {
-      setSelectedCourseForChart(courses[0].id);
-    }
-  }, [courses, selectedCourseForChart]);
   
   if (!user) return null;
   
