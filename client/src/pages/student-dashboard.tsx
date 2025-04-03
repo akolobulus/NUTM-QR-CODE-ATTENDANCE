@@ -91,7 +91,7 @@ export default function StudentDashboard() {
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center">
-            <div className="mr-3 text-xl font-bold text-primary">NUTM</div>
+            <img src="/images/nutm-logo-symbol.jpg" alt="NUTM" className="h-8 w-8 mr-3" />
             <h1 className="text-xl font-bold font-heading text-gray-800">Student Dashboard</h1>
           </div>
           

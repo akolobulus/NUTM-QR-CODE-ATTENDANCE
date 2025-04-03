@@ -49,8 +49,8 @@ export function Sidebar({ setMobileMenuOpen }: SidebarProps) {
             <X className="h-5 w-5" />
           </Button>
         )}
-        <div className="h-8 w-auto text-white font-bold mr-2">NUTM</div>
-        <span className="ml-2 text-white font-semibold font-heading">NUTM Admin</span>
+        <img src="/images/nutm-logo-symbol.jpg" alt="NUTM" className="h-8 w-8 mr-2" />
+        <span className="ml-2 text-white font-semibold font-heading">Attendance System</span>
       </div>
       <div className="h-0 flex-1 flex flex-col overflow-y-auto">
         <nav className="flex-1 px-2 py-4 space-y-1">

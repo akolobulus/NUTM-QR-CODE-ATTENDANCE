@@ -54,6 +54,121 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  constructor() {
+    // Seed the database with initial data if empty
+    this.seedDatabaseIfEmpty();
+  }
+
+  private async seedDatabaseIfEmpty() {
+    // Check if there are any users in the database
+    const existingUsers = await db.select().from(users);
+    
+    if (existingUsers.length === 0) {
+      console.log('Seeding database with initial data...');
+      
+      try {
+        // Create admin user
+        const admin = await this.createUser({
+          username: "admin",
+          password: "admin123",
+          email: "admin@nutm.edu.ng",
+          name: "Admin User",
+          role: "admin"
+        });
+        
+        // Create student user
+        const student = await this.createUser({
+          username: "student",
+          password: "student123",
+          email: "student@nutm.edu.ng",
+          name: "John Doe",
+          role: "student"
+        });
+        
+        // Create faculty
+        const computerScience = await this.createFaculty({
+          name: "Computer Science"
+        });
+        
+        // Create courses
+        const course1 = await this.createCourse({
+          courseCode: "CSC301",
+          courseName: "Computer Networks",
+          lecturer: "Prof. Sarah Johnson",
+          totalSessions: 45,
+          semester: "Beta Semester",
+          description: "Introduction to computer networking concepts",
+          minAttendancePercentage: 70
+        });
+        
+        const course2 = await this.createCourse({
+          courseCode: "CSC302",
+          courseName: "Database Systems",
+          lecturer: "Dr. Michael Wong",
+          totalSessions: 45,
+          semester: "Beta Semester",
+          description: "Database design and implementation",
+          minAttendancePercentage: 70
+        });
+        
+        const course3 = await this.createCourse({
+          courseCode: "CSC303",
+          courseName: "Software Engineering",
+          lecturer: "Prof. David Chen",
+          totalSessions: 45,
+          semester: "Beta Semester",
+          description: "Software development life cycle and methodologies",
+          minAttendancePercentage: 70
+        });
+        
+        // Create sessions
+        const now = new Date();
+        
+        await this.createSession({
+          courseId: course1.id,
+          date: now,
+          startTime: "10:30",
+          endTime: "12:30"
+        });
+        
+        await this.createSession({
+          courseId: course2.id,
+          date: now,
+          startTime: "13:15",
+          endTime: "15:15"
+        });
+        
+        const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        await this.createSession({
+          courseId: course3.id,
+          date: yesterday,
+          startTime: "09:00",
+          endTime: "11:00"
+        });
+        
+        // Enroll student in courses
+        await this.createEnrollment({
+          studentId: student.id,
+          courseId: course1.id
+        });
+        
+        await this.createEnrollment({
+          studentId: student.id,
+          courseId: course2.id
+        });
+        
+        await this.createEnrollment({
+          studentId: student.id,
+          courseId: course3.id
+        });
+        
+        console.log('Database successfully seeded!');
+      } catch (error) {
+        console.error('Error seeding database:', error);
+      }
+    }
+  }
+
   // User methods
   async getUser(id: number): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));

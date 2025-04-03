@@ -65,8 +65,8 @@ export default function Login() {
       <div className="hidden md:block md:w-1/2 bg-primary-dark">
         <div className="flex items-center justify-center h-full bg-black bg-opacity-40">
           <div className="text-center p-10">
-            <div className="mx-auto mb-8 text-4xl text-white font-bold">NUTM LOGO</div>
-            <h1 className="text-white text-4xl font-bold mb-4 font-heading">NUTM QR Attendance System</h1>
+            <img src="/images/nutm-logo-full.png" alt="NUTM Logo" className="mx-auto mb-8 h-28" />
+            <h1 className="text-white text-4xl font-bold mb-4 font-heading">QR Attendance System</h1>
             <p className="text-white text-xl">Streamlining attendance tracking for better learning outcomes</p>
           </div>
         </div>
@@ -76,7 +76,7 @@ export default function Login() {
         <Card className="max-w-md w-full shadow-none border-none">
           {/* Mobile Logo (only visible on mobile) */}
           <div className="block md:hidden text-center mb-8">
-            <div className="mx-auto text-3xl font-bold text-primary">NUTM LOGO</div>
+            <img src="/images/nutm-logo-symbol.jpg" alt="NUTM Logo" className="mx-auto h-16" />
           </div>
           
           <h2 className="text-3xl font-bold mb-8 text-center font-heading">Login to Your Account</h2>
