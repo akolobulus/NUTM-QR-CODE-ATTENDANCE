@@ -66,8 +66,8 @@ export default function Login() {
         <div className="flex items-center justify-center h-full bg-black bg-opacity-40">
           <div className="text-center p-10">
             <img src="/images/nutm-logo-full.png" alt="NUTM Logo" className="mx-auto mb-8 h-28" />
-            <h1 className="text-white text-4xl font-bold mb-4 font-heading">QR Attendance System</h1>
-            <p className="text-white text-xl">Streamlining attendance tracking for better learning outcomes</p>
+            <h1 className="text-white text-4xl font-bold mb-4 font-heading">Attendance System</h1>
+            <p className="text-white text-xl">Show up, stand out, and strive for success—your journey starts with every attendance!</p>
           </div>
         </div>
       </div>
