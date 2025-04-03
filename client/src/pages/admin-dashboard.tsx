@@ -79,7 +79,7 @@ export default function AdminDashboard() {
   });
 
   // Filter courses based on search query
-  const filteredCourses = courses?.filter(course => 
+  const filteredCourses = courses?.filter((course: { courseName: string; courseCode: string; lecturer: string }) => 
     course.courseName.toLowerCase().includes(searchQuery.toLowerCase()) || 
     course.courseCode.toLowerCase().includes(searchQuery.toLowerCase()) ||
     course.lecturer.toLowerCase().includes(searchQuery.toLowerCase())
@@ -242,7 +242,7 @@ export default function AdminDashboard() {
                         <SelectValue placeholder="Select Course" />
                       </SelectTrigger>
                       <SelectContent>
-                        {courses?.map(course => (
+                        {courses?.map((course: { id: number; courseCode: string; courseName: string }) => (
                           <SelectItem key={course.id} value={course.id.toString()}>
                             {course.courseCode} - {course.courseName}
                           </SelectItem>
@@ -322,7 +322,7 @@ export default function AdminDashboard() {
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
-                        {filteredCourses.map((course) => (
+                        {filteredCourses.map((course: { id: number; courseCode: string; courseName: string; lecturer: string; totalSessions: number }) => (
                           <tr key={course.id}>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{course.courseCode}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{course.courseName}</td>

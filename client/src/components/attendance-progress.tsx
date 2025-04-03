@@ -9,9 +9,18 @@ interface AttendanceProgressProps {
 export default function AttendanceProgress({ data }: AttendanceProgressProps) {
   const { course, attendancePercentage, attendedSessions, totalSessions } = data;
   
+  // Handle the case when course is undefined
+  if (!course) {
+    return (
+      <div className="p-4 border rounded-md text-center text-gray-500">
+        Course information unavailable
+      </div>
+    );
+  }
+  
   // Determine status based on percentage
   const getStatus = () => {
-    const minRequired = course.minAttendancePercentage;
+    const minRequired = course.minAttendancePercentage || 75; // Default to 75% if not specified
     if (attendancePercentage >= minRequired) {
       return { 
         color: 'bg-primary',
