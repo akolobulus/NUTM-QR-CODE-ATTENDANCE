@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -27,13 +27,15 @@ export default function Login() {
   const [, navigate] = useLocation();
   
   // If already logged in, redirect based on role
-  if (user) {
-    if (user.role === 'student') {
-      navigate('/student-dashboard');
-    } else if (user.role === 'admin') {
-      navigate('/admin-dashboard');
+  useEffect(() => {
+    if (user) {
+      if (user.role === 'student') {
+        navigate('/student-dashboard');
+      } else if (user.role === 'admin') {
+        navigate('/admin-dashboard');
+      }
     }
-  }
+  }, [user, navigate]);
   
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),

@@ -35,8 +35,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
 
         if (res.ok) {
-          const data = await res.json();
-          setUser(data.user);
+          const userData = await res.json();
+          setUser(userData);
         }
       } catch (error) {
         console.error('Failed to check auth status:', error);
@@ -52,13 +52,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     try {
       const res = await apiRequest('POST', '/api/auth/login', { username, password, remember });
-      const data = await res.json();
-      setUser(data.user);
+      const userData = await res.json();
+      setUser(userData);
 
       // Redirect based on role
-      if (data.user.role === 'student') {
+      if (userData.role === 'student') {
         navigate('/student-dashboard');
-      } else if (data.user.role === 'admin') {
+      } else if (userData.role === 'admin') {
         navigate('/admin-dashboard');
       }
     } catch (error) {
