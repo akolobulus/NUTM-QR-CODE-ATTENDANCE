@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useLocation } from 'wouter';
 import backgroundImage from '@/assets/images/1140.jpg';
 import nutmLogo from '@/assets/images/NUTM Logo.png';
+import nutmWhiteLogo from '@/assets/images/nutm_white_logo.42056db2-opt-3840.webp';
 
 const loginSchema = z.object({
   username: z.string().min(1, 'Username is required'),
@@ -69,7 +70,7 @@ export default function Login() {
       <div className="hidden md:block md:w-1/2 bg-primary-dark" style={{backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundBlendMode: 'multiply'}}>
         <div className="flex items-center justify-center h-full bg-black bg-opacity-40">
           <div className="text-center p-10">
-            <img src={nutmLogo} alt="NUTM Logo" className="mx-auto mb-8 h-28" />
+            <img src={nutmWhiteLogo} alt="NUTM Logo" className="mx-auto mb-8 w-[280px]" />
             <h1 className="text-white text-4xl font-bold mb-4 font-heading">Attendance System</h1>
             <p className="text-white text-xl">Show up, stand out, and strive for success—your journey starts with every attendance!</p>
           </div>
@@ -79,8 +80,8 @@ export default function Login() {
       <div className="w-full md:w-1/2 bg-white flex items-center justify-center p-8">
         <Card className="max-w-md w-full shadow-none border-none">
           {/* Mobile Logo (only visible on mobile) */}
-          <div className="block md:hidden text-center mb-8">
-            <img src={nutmLogo} alt="NUTM Logo" className="mx-auto h-16" />
+          <div className="block md:hidden text-center mb-8 bg-primary-dark p-4 rounded-lg">
+            <img src={nutmWhiteLogo} alt="NUTM Logo" className="mx-auto w-[180px]" />
           </div>
           
           <h2 className="text-3xl font-bold mb-8 text-center font-heading">Login to Your Account</h2>
