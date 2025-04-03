@@ -37,8 +37,8 @@ export function Sidebar({ setMobileMenuOpen }: SidebarProps) {
   const isMobileView = typeof setMobileMenuOpen === 'function';
 
   return (
-    <div className="fixed inset-y-0 left-0 z-50 w-64 bg-[#388E3C] flex flex-col">
-      <div className="flex items-center h-16 flex-shrink-0 px-4 bg-[#4CAF50]">
+    <div className="fixed inset-y-0 left-0 z-50 w-64 bg-[#388E3C] flex flex-col bg-blend-multiply" style={{backgroundImage: 'url(/images/1140.jpg)', backgroundSize: 'cover', backgroundPosition: 'center'}}>
+      <div className="flex items-center h-16 flex-shrink-0 px-4 bg-[#4CAF50] relative" style={{backgroundImage: 'url(/images/1140.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundBlendMode: 'multiply'}}>
         {isMobileView && (
           <Button 
             variant="ghost" 
@@ -49,7 +49,7 @@ export function Sidebar({ setMobileMenuOpen }: SidebarProps) {
             <X className="h-5 w-5" />
           </Button>
         )}
-        <img src="/images/nutm-logo-symbol.jpg" alt="NUTM" className="h-8 w-8 mr-2" />
+        <img src="/images/NUTM Logo.png" alt="NUTM" className="h-10 w-auto mr-2" />
         <span className="ml-2 text-white font-semibold font-heading">Attendance System</span>
       </div>
       <div className="h-0 flex-1 flex flex-col overflow-y-auto">
