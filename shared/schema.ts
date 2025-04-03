@@ -1,6 +1,13 @@
 import { pgTable, text, serial, integer, boolean, timestamp } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+
+// Define tables first
+export const faculties = pgTable("faculties", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique()
+});
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -45,10 +52,55 @@ export const attendance = pgTable("attendance", {
   qrCode: text("qr_code").notNull()
 });
 
-export const faculties = pgTable("faculties", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull().unique()
-});
+// Define relations
+export const facultiesRelations = relations(faculties, ({ many }) => ({
+  users: many(users)
+}));
+
+export const usersRelations = relations(users, ({ many, one }) => ({
+  enrollments: many(enrollments),
+  faculty: one(faculties, {
+    fields: [users.facultyId],
+    references: [faculties.id],
+  }),
+  attendances: many(attendance, { relationName: "student_attendances" })
+}));
+
+export const coursesRelations = relations(courses, ({ many }) => ({
+  sessions: many(sessions),
+  enrollments: many(enrollments)
+}));
+
+export const sessionsRelations = relations(sessions, ({ one, many }) => ({
+  course: one(courses, {
+    fields: [sessions.courseId],
+    references: [courses.id]
+  }),
+  attendances: many(attendance)
+}));
+
+export const enrollmentsRelations = relations(enrollments, ({ one }) => ({
+  student: one(users, {
+    fields: [enrollments.studentId],
+    references: [users.id]
+  }),
+  course: one(courses, {
+    fields: [enrollments.courseId],
+    references: [courses.id]
+  })
+}));
+
+export const attendanceRelations = relations(attendance, ({ one }) => ({
+  student: one(users, {
+    fields: [attendance.studentId],
+    references: [users.id],
+    relationName: "student_attendances"
+  }),
+  session: one(sessions, {
+    fields: [attendance.sessionId],
+    references: [sessions.id]
+  })
+}));
 
 // Insert schemas and types
 

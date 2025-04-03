@@ -6,6 +6,8 @@ import {
   attendance, type Attendance, type InsertAttendance,
   faculties, type Faculty, type InsertFaculty
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, and } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -49,6 +51,174 @@ export interface IStorage {
   getFaculty(id: number): Promise<Faculty | undefined>;
   createFaculty(faculty: InsertFaculty): Promise<Faculty>;
   getFaculties(): Promise<Faculty[]>;
+}
+
+export class DatabaseStorage implements IStorage {
+  // User methods
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user;
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    const [newUser] = await db.insert(users).values(user).returning();
+    return newUser;
+  }
+
+  async getUsers(): Promise<User[]> {
+    return await db.select().from(users);
+  }
+
+  async getUsersByRole(role: string): Promise<User[]> {
+    return await db.select().from(users).where(eq(users.role, role));
+  }
+
+  // Course methods
+  async getCourse(id: number): Promise<Course | undefined> {
+    const [course] = await db.select().from(courses).where(eq(courses.id, id));
+    return course;
+  }
+
+  async getCourseByCode(code: string): Promise<Course | undefined> {
+    const [course] = await db.select().from(courses).where(eq(courses.courseCode, code));
+    return course;
+  }
+
+  async createCourse(course: InsertCourse): Promise<Course> {
+    const [newCourse] = await db.insert(courses).values(course).returning();
+    return newCourse;
+  }
+
+  async getCourses(): Promise<Course[]> {
+    return await db.select().from(courses);
+  }
+
+  async getCoursesBySemester(semester: string): Promise<Course[]> {
+    return await db.select().from(courses).where(eq(courses.semester, semester));
+  }
+
+  async updateCourse(id: number, course: Partial<InsertCourse>): Promise<Course | undefined> {
+    const [updatedCourse] = await db.update(courses)
+      .set(course)
+      .where(eq(courses.id, id))
+      .returning();
+    return updatedCourse;
+  }
+
+  async deleteCourse(id: number): Promise<boolean> {
+    const result = await db.delete(courses).where(eq(courses.id, id));
+    return !!result;
+  }
+
+  // Session methods
+  async getSession(id: number): Promise<Session | undefined> {
+    const [session] = await db.select().from(sessions).where(eq(sessions.id, id));
+    return session;
+  }
+
+  async createSession(session: InsertSession): Promise<Session> {
+    const [newSession] = await db.insert(sessions).values(session).returning();
+    return newSession;
+  }
+
+  async getSessions(): Promise<Session[]> {
+    return await db.select().from(sessions);
+  }
+
+  async getSessionsByCourse(courseId: number): Promise<Session[]> {
+    return await db.select().from(sessions).where(eq(sessions.courseId, courseId));
+  }
+
+  // Enrollment methods
+  async getEnrollment(id: number): Promise<Enrollment | undefined> {
+    const [enrollment] = await db.select().from(enrollments).where(eq(enrollments.id, id));
+    return enrollment;
+  }
+
+  async createEnrollment(enrollment: InsertEnrollment): Promise<Enrollment> {
+    const [newEnrollment] = await db.insert(enrollments).values(enrollment).returning();
+    return newEnrollment;
+  }
+
+  async getEnrollments(): Promise<Enrollment[]> {
+    return await db.select().from(enrollments);
+  }
+
+  async getEnrollmentsByStudent(studentId: number): Promise<Enrollment[]> {
+    return await db.select().from(enrollments).where(eq(enrollments.studentId, studentId));
+  }
+
+  async getEnrollmentsByCourse(courseId: number): Promise<Enrollment[]> {
+    return await db.select().from(enrollments).where(eq(enrollments.courseId, courseId));
+  }
+
+  // Attendance methods
+  async getAttendance(id: number): Promise<Attendance | undefined> {
+    const [attendanceRecord] = await db.select().from(attendance).where(eq(attendance.id, id));
+    return attendanceRecord;
+  }
+
+  async createAttendance(attendanceRecord: InsertAttendance): Promise<Attendance> {
+    const [newAttendance] = await db.insert(attendance).values(attendanceRecord).returning();
+    return newAttendance;
+  }
+
+  async getAttendanceByStudent(studentId: number): Promise<Attendance[]> {
+    return await db.select().from(attendance).where(eq(attendance.studentId, studentId));
+  }
+
+  async getAttendanceBySession(sessionId: number): Promise<Attendance[]> {
+    return await db.select().from(attendance).where(eq(attendance.sessionId, sessionId));
+  }
+
+  async getAttendanceByStudentAndCourse(studentId: number, courseId: number): Promise<Attendance[]> {
+    // This is a more complex query where we need to join sessions and attendance
+    const courseSessions = await this.getSessionsByCourse(courseId);
+    const sessionIds = courseSessions.map(session => session.id);
+    
+    // Only proceed if there are sessions for this course
+    if (sessionIds.length === 0) return [];
+    
+    // Find attendance records for the student that match any of the course's sessions
+    return await db.select()
+      .from(attendance)
+      .where(
+        and(
+          eq(attendance.studentId, studentId),
+          // In Drizzle, we'd typically use an "in" operator here, but we'll simulate with basic filtering
+          // Since we might have multiple sessions, we'll handle this in memory for simplicity
+          eq(attendance.studentId, studentId) // Placeholder - we'll filter by sessionIds below
+        )
+      )
+      .then(records => {
+        return records.filter(record => sessionIds.includes(record.sessionId));
+      });
+  }
+
+  // Faculty methods
+  async getFaculty(id: number): Promise<Faculty | undefined> {
+    const [faculty] = await db.select().from(faculties).where(eq(faculties.id, id));
+    return faculty;
+  }
+
+  async createFaculty(faculty: InsertFaculty): Promise<Faculty> {
+    const [newFaculty] = await db.insert(faculties).values(faculty).returning();
+    return newFaculty;
+  }
+
+  async getFaculties(): Promise<Faculty[]> {
+    return await db.select().from(faculties);
+  }
 }
 
 export class MemStorage implements IStorage {
@@ -370,4 +540,5 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Use the DatabaseStorage implementation instead of MemStorage
+export const storage = new DatabaseStorage();

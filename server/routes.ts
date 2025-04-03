@@ -591,8 +591,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     const students = await storage.getUsersByRole('student');
     const courses = await storage.getCourses();
-    const attendances = await storage.getAttendances();
+    // Get all attendance records by combining results across all sessions
     const sessions = await storage.getSessions();
+    const attendancesPromises = sessions.map(session => storage.getAttendanceBySession(session.id));
+    const attendancesBySession = await Promise.all(attendancesPromises);
+    const attendances = attendancesBySession.flat();
     
     // Count at-risk students (attendance below minimum required)
     let atRiskCount = 0;
@@ -748,7 +751,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     // Get attendance data
-    const allAttendances = await storage.getAttendances();
+    // Get all sessions
+    const allSessions = await storage.getSessions();
+    
+    // Get attendance records for all sessions
+    const allAttendancesPromises = allSessions.map(session => 
+      storage.getAttendanceBySession(session.id)
+    );
+    const allAttendancesBySession = await Promise.all(allAttendancesPromises);
+    const allAttendances = allAttendancesBySession.flat();
+    
+    // Filter by courseId if needed
     const filteredAttendances = courseId !== undefined 
       ? await Promise.all(
           allAttendances.filter(async (attendance) => {
