@@ -193,7 +193,7 @@ export default function StudentDashboard() {
                             <PaginationItem>
                               <PaginationPrevious 
                                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                                disabled={currentPage === 1}
+                                className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
                               />
                             </PaginationItem>
                             
@@ -211,7 +211,7 @@ export default function StudentDashboard() {
                             <PaginationItem>
                               <PaginationNext 
                                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                                disabled={currentPage === totalPages}
+                                className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
                               />
                             </PaginationItem>
                           </PaginationContent>

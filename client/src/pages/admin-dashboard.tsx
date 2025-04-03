@@ -96,14 +96,14 @@ export default function AdminDashboard() {
     );
   }
 
-  if (!user) return null;
-
   // Set a default selected course for chart if we haven't selected one yet but have courses
   useEffect(() => {
     if (courses?.length && selectedCourseForChart === null) {
       setSelectedCourseForChart(courses[0].id);
     }
   }, [courses, selectedCourseForChart]);
+  
+  if (!user) return null;
   
   const handleExportAttendance = () => {
     downloadAttendanceReport(selectedCourseForChart || undefined);
