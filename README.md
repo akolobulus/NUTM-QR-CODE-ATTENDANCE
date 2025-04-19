@@ -1,6 +1,6 @@
 # NUTM QR-Based Attendance Tracking System
 
-A modern, QR-based attendance tracking system for NUTM (National University of Technology and Management), offering comprehensive management tools for students and administrators through an intuitive, technology-driven platform.
+A modern, QR-based attendance tracking system for NUTM (Nigerian University of Technology and Management), offering comprehensive management tools for students and administrators through an intuitive, technology-driven platform.
 
 ## 📋 Overview
 
